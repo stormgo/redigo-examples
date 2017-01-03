@@ -17,8 +17,11 @@ func main() {
 	reader := bytes.NewReader(json)
 
 	scanner := bufio.NewScanner(reader)
+	count := 0
 	for scanner.Scan() {
+		fmt.Println("line = ", count)
 		fmt.Println(scanner.Text()) // Println will add back the final '\n'
+		count = count + 1
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
