@@ -14,27 +14,37 @@ func main() {
 	url := "http://127.0.0.1:3000/omdb.json"
 	json := getJson(url)
 	fmt.Println(len(json))
-	getChannel(json)
-}
-
-func getChannel(json []byte) error {
-	reader := bytes.NewReader(json)
-
-	scanner := bufio.NewScanner(reader)
+	doc_chan := getChannel(json)
 	count := 0
-	for scanner.Scan() {
-		evenodd := count % 2
-		if evenodd == 0 {
-			fmt.Println(count, " ", scanner.Text()) // Println will add back the final '\n'
-		} else {
-			fmt.Println(count, " ", scanner.Text()) // Println will add back the final '\n'
-		}
+	for doc := range doc_chan {
+		fmt.Println(count, " ", doc)
 		count = count + 1
 	}
-	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "reading standard input:", err)
-	}
-	return nil
+}
+
+func getChannel(json []byte) <-chan string {
+	doc_chan := make(chan string)
+	go func() {
+		reader := bytes.NewReader(json)
+		scanner := bufio.NewScanner(reader)
+		count := 0
+		var doc string
+		for scanner.Scan() {
+			evenodd := count % 2
+			if evenodd == 0 {
+				scanner.Text()
+			} else {
+				doc = scanner.Text()
+				doc_chan <- doc
+			}
+			count = count + 1
+		}
+		if err := scanner.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, "reading standard input:", err)
+		}
+		close(doc_chan)
+	}()
+	return doc_chan
 }
 
 func getJson(url string) (buf []byte) {
