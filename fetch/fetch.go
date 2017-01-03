@@ -19,8 +19,12 @@ func main() {
 	scanner := bufio.NewScanner(reader)
 	count := 0
 	for scanner.Scan() {
-		fmt.Println("line = ", count)
-		fmt.Println(scanner.Text()) // Println will add back the final '\n'
+		evenodd := count % 2
+		if evenodd == 0 {
+			fmt.Println(count, " ", scanner.Text()) // Println will add back the final '\n'
+		} else {
+			fmt.Println(count, " ", scanner.Text()) // Println will add back the final '\n'
+		}
 		count = count + 1
 	}
 	if err := scanner.Err(); err != nil {
