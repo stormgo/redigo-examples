@@ -14,6 +14,10 @@ func main() {
 	url := "http://127.0.0.1:3000/omdb.json"
 	json := getJson(url)
 	fmt.Println(len(json))
+	getChannel(json)
+}
+
+func getChannel(json []byte) error {
 	reader := bytes.NewReader(json)
 
 	scanner := bufio.NewScanner(reader)
@@ -30,6 +34,7 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
+	return nil
 }
 
 func getJson(url string) (buf []byte) {
